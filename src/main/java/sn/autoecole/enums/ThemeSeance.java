@@ -1,0 +1,13 @@
+package sn.autoecole.enums;
+
+public enum ThemeSeance {
+    FEUX_SIGNALISATION,
+    PANNEAUX_SIGNALISATION,
+    SIGNALISATION_SOL,
+    REGLES_PRIORITE,
+    CONDUITE_NUIT,
+    CONDUITE_AUTOROUTE,
+    STATIONNEMENT,
+    SECURITE_ROUTIERE,
+    AUTRE
+}

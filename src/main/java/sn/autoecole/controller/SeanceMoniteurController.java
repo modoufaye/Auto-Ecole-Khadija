@@ -1,0 +1,57 @@
+package sn.autoecole.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+import sn.autoecole.dto.SeanceRequest;
+import sn.autoecole.dto.SeanceResponse;
+import sn.autoecole.entity.User;
+import sn.autoecole.service.SeanceService;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/moniteur/seances")
+@RequiredArgsConstructor
+public class SeanceMoniteurController {
+
+    private final SeanceService seanceService;
+
+    @GetMapping
+    public List<SeanceResponse> list(@AuthenticationPrincipal UserDetails user) {
+        return seanceService.findByMoniteur(user.getUsername());
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public SeanceResponse create(@RequestBody SeanceRequest req, @AuthenticationPrincipal UserDetails user) {
+        return seanceService.create(req, user.getUsername());
+    }
+
+    @PutMapping("/{id}")
+    public SeanceResponse update(@PathVariable Long id, @RequestBody SeanceRequest req,
+                                 @AuthenticationPrincipal UserDetails user) {
+        return seanceService.update(id, req, user.getUsername());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails user) {
+        seanceService.delete(id, user.getUsername());
+    }
+
+    /** Élèves assignés à ce moniteur — pré-sélectionnés par défaut dans une nouvelle séance */
+    @GetMapping("/eleves")
+    public List<Map<String, Object>> getEleves(@AuthenticationPrincipal UserDetails user) {
+        return seanceService.findElevesByMoniteur(user.getUsername()).stream()
+                .map(e -> Map.<String, Object>of(
+                        "id",    e.getId(),
+                        "nom",   e.getNom() + " " + e.getPrenom(),
+                        "email", e.getEmail() != null ? e.getEmail() : ""
+                ))
+                .toList();
+    }
+}

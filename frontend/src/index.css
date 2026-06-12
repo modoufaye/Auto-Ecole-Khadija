@@ -1,0 +1,236 @@
+:root {
+  --sidebar-width: 248px;
+  --sidebar-collapsed-width: 68px;
+  --topbar-height: 64px;
+  --navy: #1e3a5f;
+  --navy-dark: #142a47;
+  --navy-light: #2a4f7c;
+  --gold: #d4a017;
+  --gold-light: #f0bb2a;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background: #f0f2f7;
+}
+
+#root {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ─────────────────────────────────────────── */
+#sidebar {
+  width: var(--sidebar-width);
+  min-height: 100vh;
+  background: var(--navy);
+  color: #fff;
+  transition: width .25s ease;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 24px rgba(0,0,0,.15);
+}
+
+#sidebar.collapsed { width: var(--sidebar-collapsed-width); }
+
+/* Logo */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  padding: 1.4rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 800;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  background: var(--navy-dark);
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  letter-spacing: -.01em;
+}
+
+.sidebar-brand .brand-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(212,160,23,.35);
+}
+
+.sidebar-brand .brand-icon i { font-size: 1.1rem; color: #fff; }
+.sidebar-brand .brand-sub { font-size: .65rem; color: rgba(255,255,255,.45); font-weight: 400; letter-spacing: .1em; text-transform: uppercase; }
+.brand-text { overflow: hidden; line-height: 1.2; }
+
+#sidebar.collapsed .brand-text,
+#sidebar.collapsed .nav-text,
+#sidebar.collapsed .section-title { display: none; }
+
+/* Navigation */
+.sidebar-menu { padding: .75rem 0; margin: 0; list-style: none; flex: 1; }
+
+.sidebar-section-title {
+  padding: .9rem 1.1rem .3rem;
+  font-size: .62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.3);
+  white-space: nowrap;
+}
+
+.sidebar-menu .nav-link {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .7rem 1.1rem;
+  color: rgba(255,255,255,.6);
+  text-decoration: none;
+  font-size: .85rem;
+  font-weight: 500;
+  transition: background .15s, color .15s, border-left-color .15s;
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  border-left: 3px solid transparent;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  margin: 1px 0;
+}
+
+.sidebar-menu .nav-link i { font-size: 1.05rem; flex-shrink: 0; }
+.sidebar-menu .nav-link:hover { background: rgba(255,255,255,.07); color: #fff; }
+.sidebar-menu .nav-link.active {
+  background: rgba(212,160,23,.12);
+  color: var(--gold-light);
+  font-weight: 700;
+  border-left-color: var(--gold);
+}
+.sidebar-menu .nav-link.active i { color: var(--gold); }
+
+/* Sidebar footer */
+.sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding: .75rem;
+  background: rgba(0,0,0,.15);
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .6rem .7rem;
+  border-radius: .6rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: .85rem;
+  color: var(--navy);
+  flex-shrink: 0;
+}
+
+.user-card .user-name { font-size: .82rem; font-weight: 600; color: #fff; }
+.user-card .user-role { font-size: .67rem; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .06em; }
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  width: 100%;
+  padding: .55rem .7rem;
+  margin-top: .4rem;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: .6rem;
+  background: transparent;
+  color: rgba(255,255,255,.5);
+  font-size: .8rem;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.btn-logout:hover { background: rgba(239,68,68,.15); color: #fca5a5; border-color: rgba(239,68,68,.3); }
+.btn-logout i { font-size: .95rem; }
+
+/* ── Top bar ─────────────────────────────────────────── */
+.top-bar {
+  height: var(--topbar-height);
+  background: #fff;
+  border-bottom: 1px solid #e5e9f0;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  gap: .75rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 8px rgba(0,0,0,.05);
+}
+
+.top-bar .toggle-btn {
+  border: none;
+  background: #f0f2f7;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #64748b;
+  padding: .45rem .55rem;
+  border-radius: .5rem;
+  transition: background .15s, color .15s;
+  line-height: 1;
+}
+.top-bar .toggle-btn:hover { background: #e2e8f0; color: var(--navy); }
+
+.page-title {
+  font-weight: 700;
+  font-size: .95rem;
+  color: #1e293b;
+}
+.page-breadcrumb {
+  font-size: .75rem;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* ── Content ─────────────────────────────────────────── */
+#content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.main-content { padding: 1.75rem; flex: 1; }
+
+/* ── Section header ──────────────────────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.section-header h5 { margin: 0; font-weight: 700; color: #1e293b; }
+
+/* ── Table ───────────────────────────────────────────── */
+.table th { font-size: .75rem; text-transform: uppercase; letter-spacing: .4px; color: #94a3b8; font-weight: 600; border-bottom-width: 1px; }
+.table td { vertical-align: middle; font-size: .875rem; color: #374151; }
+.table-hover tbody tr:hover { background: #f8fafc; }
+
+/* ── Misc ────────────────────────────────────────────── */
+.search-input { max-width: 300px; }
+.btn-action { padding: .2rem .45rem; }
+.section-label { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: #cbd5e1; margin: .25rem 0; }
