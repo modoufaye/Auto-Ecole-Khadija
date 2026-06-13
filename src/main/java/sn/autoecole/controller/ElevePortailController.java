@@ -47,7 +47,6 @@ public class ElevePortailController {
         if (body.containsKey("prenom")    && body.get("prenom")    != null) eleve.setPrenom(body.get("prenom").trim());
         if (body.containsKey("telephone") && body.get("telephone") != null) eleve.setTelephone(body.get("telephone").trim());
         if (body.containsKey("adresse"))    eleve.setAdresse(body.get("adresse"));
-        if (body.containsKey("email"))      eleve.setEmail(body.get("email"));
         if (body.containsKey("numeroCni"))  eleve.setNumeroCni(body.get("numeroCni"));
         return eleveRepository.save(eleve);
     }
