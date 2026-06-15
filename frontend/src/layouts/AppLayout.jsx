@@ -15,6 +15,7 @@ import SeancesMoniteur from '../components/SeancesMoniteur'
 import SeancesEleve from '../components/SeancesEleve'
 import ElevePortail from '../components/ElevePortail'
 import MonProfil from '../components/MonProfil'
+import MesPaiements from '../components/MesPaiements'
 
 const ALL_SECTIONS = [
   { key: 'mon-espace',       label: 'Mon Espace',       icon: 'house-fill',            color: '#60a5fa', roles: ['ELEVE'] },
@@ -28,6 +29,7 @@ const ALL_SECTIONS = [
   { key: 'seances-eleve',    label: 'Mes Cours',        icon: 'play-circle-fill',      color: '#06b6d4', roles: ['ELEVE'] },
   { key: 'examens',          label: 'Examens',          icon: 'clipboard2-check-fill', color: '#fb923c', roles: ['SUPER_ADMIN', 'ELEVE'] },
   { key: 'paiements',        label: 'Paiements',        icon: 'cash-stack',            color: '#f97316', roles: ['SUPER_ADMIN'] },
+  { key: 'mes-paiements',   label: 'Mes Paiements',    icon: 'cash-stack',            color: '#4ade80', roles: ['ELEVE'] },
   { key: 'mon-profil',       label: 'Mon Profil',       icon: 'person-circle',         color: '#f87171', roles: ['SUPER_ADMIN', 'MONITEUR'] },
 ]
 
@@ -35,7 +37,7 @@ const COMPONENTS = {
   'mon-espace': ElevePortail,
   dashboard: Dashboard, eleves: Eleves, moniteurs: Moniteurs,
   vehicules: Vehicules, lecons: Lecons, cours: Cours,
-  examens: Examens, paiements: Paiements,
+  examens: Examens, paiements: Paiements, 'mes-paiements': MesPaiements,
   'seances-moniteur': SeancesMoniteur,
   'seances-eleve': SeancesEleve,
   'mon-profil': MonProfil,
@@ -185,6 +187,8 @@ export default function AppLayout() {
         <main className="main-content">
           {section === 'mon-espace'
             ? <ElevePortail key="mon-espace" onGoSection={handleSectionChange} />
+            : section === 'seances-eleve'
+            ? <SeancesEleve key="seances-eleve" onBack={() => handleSectionChange('mon-espace')} />
             : section === 'examens'
             ? <Examens key="examens" onEleveClick={handleEleveClick} />
             : section === 'eleves'

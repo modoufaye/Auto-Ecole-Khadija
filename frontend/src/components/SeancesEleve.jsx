@@ -45,7 +45,7 @@ function blocIcon(blocs) {
   return 'file-text-fill'
 }
 
-export default function SeancesEleve() {
+export default function SeancesEleve({ onBack }) {
   const [seances, setSeances]   = useState([])
   const [loading, setLoading]   = useState(true)
   const [selected, setSelected] = useState(null)
@@ -139,6 +139,18 @@ export default function SeancesEleve() {
 
       {/* En-tête page */}
       <div className="flex items-center gap-4">
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl border-0 cursor-pointer transition-all flex-shrink-0"
+            style={{ background: '#f1f5f9', color: '#475569' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#e2e8f0'}
+            onMouseLeave={e => e.currentTarget.style.background = '#f1f5f9'}
+          >
+            <i className="bi bi-arrow-left" />
+            Mon Espace
+          </button>
+        )}
         <div>
           <h1 className="text-2xl font-extrabold text-slate-800 leading-tight">Mes Cours</h1>
           <p className="text-slate-400 text-sm mt-0.5">Séances publiées par votre moniteur</p>

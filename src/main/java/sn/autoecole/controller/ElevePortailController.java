@@ -10,7 +10,9 @@ import org.springframework.web.server.ResponseStatusException;
 import sn.autoecole.entity.Eleve;
 import sn.autoecole.entity.Examen;
 import sn.autoecole.entity.Lecon;
+import sn.autoecole.entity.Paiement;
 import sn.autoecole.repository.EleveRepository;
+import sn.autoecole.repository.PaiementRepository;
 import sn.autoecole.repository.UserRepository;
 import sn.autoecole.service.ExamenService;
 import sn.autoecole.service.LeconService;
@@ -23,11 +25,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ElevePortailController {
 
-    private final EleveRepository eleveRepository;
-    private final UserRepository  userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final ExamenService   examenService;
-    private final LeconService    leconService;
+    private final EleveRepository    eleveRepository;
+    private final UserRepository     userRepository;
+    private final PaiementRepository paiementRepository;
+    private final PasswordEncoder    passwordEncoder;
+    private final ExamenService      examenService;
+    private final LeconService       leconService;
 
     private Eleve eleveConnecte(Authentication auth) {
         return eleveRepository.findByEmailIgnoreCase(auth.getName())
@@ -59,6 +62,11 @@ public class ElevePortailController {
     @GetMapping("/mes-lecons")
     public List<Lecon> getMesLecons(Authentication auth) {
         return leconService.listerParEleve(eleveConnecte(auth).getId());
+    }
+
+    @GetMapping("/mes-paiements")
+    public List<Paiement> getMesPaiements(Authentication auth) {
+        return paiementRepository.findByEleveId(eleveConnecte(auth).getId());
     }
 
     @PutMapping("/changer-mot-de-passe")
