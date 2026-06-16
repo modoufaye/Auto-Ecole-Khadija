@@ -15,7 +15,7 @@ const STATUT_CFG = {
   ANNULE:     { label: 'Annulé',     bg: '#fef2f2', color: '#b91c1c', dot: '#ef4444' },
 }
 
-export default function MesPaiements() {
+export default function MesPaiements({ onBack }) {
   const [paiements, setPaiements] = useState([])
   const [loading, setLoading]     = useState(true)
 
@@ -40,6 +40,20 @@ export default function MesPaiements() {
 
   return (
     <div className="space-y-5 max-w-3xl mx-auto" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+
+      {/* Bouton retour */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl border-0 cursor-pointer transition-all"
+          style={{ background: '#f1f5f9', color: '#475569' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#e2e8f0'}
+          onMouseLeave={e => e.currentTarget.style.background = '#f1f5f9'}
+        >
+          <i className="bi bi-arrow-left" />
+          Mon Espace
+        </button>
+      )}
 
       {/* Bannière */}
       <div className="rounded-2xl overflow-hidden relative"

@@ -356,27 +356,6 @@ export default function ElevePortail({ onGoSection }) {
         </div>
       </div>
 
-      {/* ══ COURS CONDUITE ════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,.07)' }}>
-        <div className="flex items-center justify-between px-6 py-3"
-          style={{ background: 'linear-gradient(135deg, #78350f 0%, #b45309 100%)', borderBottom: '2px solid #4d1f04' }}>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,.18)' }}>
-              <i className="bi bi-car-front-fill" style={{ color: '#fff', fontSize: '.85rem' }} />
-            </div>
-            <div>
-              <div className="font-extrabold text-sm text-white leading-tight">Cours Conduite</div>
-              <div className="text-xs mt-0.5" style={{ color: 'rgba(253,230,138,.85)' }}>Formation pratique à la conduite</div>
-            </div>
-          </div>
-          <span className="text-xs font-bold px-3 py-1 rounded-full"
-            style={{ background: 'rgba(255,255,255,.18)', color: '#fff' }}>
-            {leconsConduite.length}
-          </span>
-        </div>
-        <TableLecons lecons={leconsConduite} empty={{ icon: 'car-front', text: 'Aucun cours de conduite enregistré' }} />
-      </div>
-
       {/* ══ COURS CODE ════════════════════════════════════════ */}
       <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,.07)' }}>
         <div className="flex items-center justify-between px-6 py-3"
@@ -396,6 +375,27 @@ export default function ElevePortail({ onGoSection }) {
           </span>
         </div>
         <TableLecons lecons={leconsCode} empty={{ icon: 'book', text: 'Aucun cours de code enregistré' }} />
+      </div>
+
+      {/* ══ COURS CONDUITE ════════════════════════════════════ */}
+      <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,.07)' }}>
+        <div className="flex items-center justify-between px-6 py-3"
+          style={{ background: 'linear-gradient(135deg, #78350f 0%, #b45309 100%)', borderBottom: '2px solid #4d1f04' }}>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,.18)' }}>
+              <i className="bi bi-car-front-fill" style={{ color: '#fff', fontSize: '.85rem' }} />
+            </div>
+            <div>
+              <div className="font-extrabold text-sm text-white leading-tight">Cours Conduite</div>
+              <div className="text-xs mt-0.5" style={{ color: 'rgba(253,230,138,.85)' }}>Formation pratique à la conduite</div>
+            </div>
+          </div>
+          <span className="text-xs font-bold px-3 py-1 rounded-full"
+            style={{ background: 'rgba(255,255,255,.18)', color: '#fff' }}>
+            {leconsConduite.length}
+          </span>
+        </div>
+        <TableLecons lecons={leconsConduite} empty={{ icon: 'car-front', text: 'Aucun cours de conduite enregistré' }} />
       </div>
 
       {/* ══ INFOS : 2 colonnes ════════════════════════════════ */}

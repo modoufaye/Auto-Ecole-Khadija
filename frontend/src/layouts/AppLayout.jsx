@@ -23,10 +23,10 @@ const ALL_SECTIONS = [
   { key: 'eleves',           label: 'Élèves',           icon: 'people-fill',           color: '#38bdf8', roles: ['SUPER_ADMIN', 'MONITEUR'] },
   { key: 'moniteurs',        label: 'Moniteurs',        icon: 'person-badge-fill',     color: '#a78bfa', roles: ['SUPER_ADMIN'] },
   { key: 'vehicules',        label: 'Véhicules',        icon: 'car-front',             color: '#34d399', roles: ['SUPER_ADMIN', 'MONITEUR'] },
-  { key: 'lecons',           label: 'Cours Conduite',   icon: 'calendar2-check',       color: '#f472b6', roles: ['SUPER_ADMIN', 'MONITEUR', 'ELEVE'] },
   { key: 'cours',            label: 'Cours Code',       icon: 'sign-turn-right-fill',  color: '#fbbf24', roles: ['SUPER_ADMIN', 'MONITEUR', 'ELEVE'] },
+  { key: 'lecons',           label: 'Cours Conduite',   icon: 'calendar2-check',       color: '#f472b6', roles: ['SUPER_ADMIN', 'MONITEUR', 'ELEVE'] },
   { key: 'seances-moniteur', label: 'Mes Séances',      icon: 'camera-video-fill',     color: '#c084fc', roles: ['MONITEUR'] },
-  { key: 'seances-eleve',    label: 'Mes Cours',        icon: 'play-circle-fill',      color: '#06b6d4', roles: ['ELEVE'] },
+  { key: 'seances-eleve',    label: 'Mes Séances',      icon: 'play-circle-fill',      color: '#06b6d4', roles: ['ELEVE'] },
   { key: 'examens',          label: 'Examens',          icon: 'clipboard2-check-fill', color: '#fb923c', roles: ['SUPER_ADMIN', 'ELEVE'] },
   { key: 'paiements',        label: 'Paiements',        icon: 'cash-stack',            color: '#f97316', roles: ['SUPER_ADMIN'] },
   { key: 'mes-paiements',   label: 'Mes Paiements',    icon: 'cash-stack',            color: '#4ade80', roles: ['ELEVE'] },
@@ -190,7 +190,13 @@ export default function AppLayout() {
             : section === 'seances-eleve'
             ? <SeancesEleve key="seances-eleve" onBack={() => handleSectionChange('mon-espace')} />
             : section === 'examens'
-            ? <Examens key="examens" onEleveClick={handleEleveClick} />
+            ? <Examens key="examens" onEleveClick={handleEleveClick} onBack={user?.role === 'ELEVE' ? () => handleSectionChange('mon-espace') : undefined} />
+            : section === 'lecons'
+            ? <ActiveComponent key={section} onBack={user?.role === 'ELEVE' ? () => handleSectionChange('mon-espace') : undefined} />
+            : section === 'cours'
+            ? <ActiveComponent key={section} onBack={user?.role === 'ELEVE' ? () => handleSectionChange('mon-espace') : undefined} />
+            : section === 'mes-paiements'
+            ? <ActiveComponent key={section} onBack={() => handleSectionChange('mon-espace')} />
             : section === 'eleves'
             ? <Eleves key={`eleves-${navigateToEleve ?? 'list'}`} initialEleveId={navigateToEleve} />
             : <ActiveComponent key={section} />}

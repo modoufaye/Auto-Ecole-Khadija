@@ -1,17 +1,21 @@
 package sn.autoecole.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sn.autoecole.dto.EleveRequest;
 import sn.autoecole.entity.Eleve;
 import sn.autoecole.entity.Moniteur;
+import sn.autoecole.entity.User;
 import sn.autoecole.enums.CategoriePermis;
+import sn.autoecole.enums.RoleUser;
 import sn.autoecole.enums.StatutEleve;
 import sn.autoecole.exception.BusinessException;
 import sn.autoecole.exception.ResourceNotFoundException;
 import sn.autoecole.repository.EleveRepository;
 import sn.autoecole.repository.MoniteurRepository;
+import sn.autoecole.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,8 +25,10 @@ import java.util.List;
 @Transactional
 public class EleveService {
 
-    private final EleveRepository eleveRepository;
+    private final EleveRepository    eleveRepository;
     private final MoniteurRepository moniteurRepository;
+    private final UserRepository     userRepository;
+    private final PasswordEncoder    passwordEncoder;
 
     public List<Eleve> listerTous() {
         return eleveRepository.findAll();
@@ -64,7 +70,21 @@ public class EleveService {
                 .statut(request.getStatut() != null ? request.getStatut() : StatutEleve.EN_COURS)
                 .build();
         eleve.setMoniteur(resolveMoniteur(request.getMoniteurId()));
-        return eleveRepository.save(eleve);
+        Eleve saved = eleveRepository.save(eleve);
+        creerCompteParDefaut(saved);
+        return saved;
+    }
+
+    private void creerCompteParDefaut(Eleve eleve) {
+        if (eleve.getEmail() == null || eleve.getEmail().isBlank()) return;
+        if (userRepository.existsByEmail(eleve.getEmail())) return;
+        String motDePasse = "Eleve@" + LocalDate.now().getYear();
+        userRepository.save(User.builder()
+                .nom(eleve.getPrenom() + " " + eleve.getNom())
+                .email(eleve.getEmail())
+                .motDePasse(passwordEncoder.encode(motDePasse))
+                .role(RoleUser.ELEVE)
+                .build());
     }
 
     public Eleve modifier(Long id, EleveRequest request) {

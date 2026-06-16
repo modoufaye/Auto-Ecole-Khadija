@@ -137,30 +137,19 @@ export default function SeancesEleve({ onBack }) {
   return (
     <div style={{ fontFamily: 'Inter, system-ui, sans-serif' }} className="space-y-5">
 
-      {/* En-tête page */}
-      <div className="flex items-center gap-4">
-        {onBack && (
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl border-0 cursor-pointer transition-all flex-shrink-0"
-            style={{ background: '#f1f5f9', color: '#475569' }}
-            onMouseEnter={e => e.currentTarget.style.background = '#e2e8f0'}
-            onMouseLeave={e => e.currentTarget.style.background = '#f1f5f9'}
-          >
-            <i className="bi bi-arrow-left" />
-            Mon Espace
-          </button>
-        )}
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-800 leading-tight">Mes Cours</h1>
-          <p className="text-slate-400 text-sm mt-0.5">Séances publiées par votre moniteur</p>
-        </div>
-        <span className="ml-auto inline-flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full"
-          style={{ background: '#eff6ff', color: '#1e3a5f' }}>
-          <i className="bi bi-play-circle-fill" />
-          {seances.length} cours
-        </span>
-      </div>
+      {/* Bouton retour */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl border-0 cursor-pointer transition-all"
+          style={{ background: '#f1f5f9', color: '#475569' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#e2e8f0'}
+          onMouseLeave={e => e.currentTarget.style.background = '#f1f5f9'}
+        >
+          <i className="bi bi-arrow-left" />
+          Mon Espace
+        </button>
+      )}
 
       {/* Contenu */}
       <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,.07)' }}>
