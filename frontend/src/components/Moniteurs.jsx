@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import { api } from '../api'
 import { fmtDate, LABELS } from '../utils'
 import { toast } from './Toast'
+import Pagination from './Pagination'
 import '../landing.css'
+
+const PAGE_SIZE = 10
 
 const CATS = ['A', 'A1', 'B', 'C', 'D', 'EB', 'EC']
 const EMPTY = { nom: '', prenom: '', telephone: '', email: '', numeroCni: '', numeroPermis: '', dateEmbauche: '', categoriesAutorisees: [], actif: true }
@@ -77,6 +80,7 @@ export default function Moniteurs() {
   const [elevesSelected, setElevesSel] = useState([])
   const [loadingEleves, setLoadingEl] = useState(false)
   const [elevesCount, setElevesCount] = useState({})
+  const [page, setPage]               = useState(1)
 
   const load = async () => {
     setLoading(true)
@@ -101,6 +105,7 @@ export default function Moniteurs() {
     if (!search.trim()) { setFiltered(list); return }
     const t = search.toLowerCase()
     setFiltered(list.filter(m => `${m.nom} ${m.prenom}`.toLowerCase().includes(t)))
+    setPage(1)
   }, [search, list])
 
   /* ── Ouvrir le profil ──────────────────────────────────── */
@@ -578,7 +583,7 @@ export default function Moniteurs() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((m, i) => (
+                {filtered.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE).map((m, i) => (
                   <tr key={m.id} style={{ background: i % 2 === 0 ? '#fff' : '#fafbfc' }}
                     className="transition-colors hover:bg-blue-50/40">
 
@@ -659,6 +664,7 @@ export default function Moniteurs() {
             </table>
           </div>
         )}
+        <Pagination page={page} setPage={setPage} total={filtered.length} pageSize={PAGE_SIZE} />
       </div>
 
       {showModal && renderModal()}

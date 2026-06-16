@@ -3,7 +3,10 @@ import { api } from '../api'
 import { fmtDate, fmtTime } from '../utils'
 import { toast } from './Toast'
 import { useAuth } from '../context/AuthContext'
+import Pagination from './Pagination'
 import '../landing.css'
+
+const PAGE_SIZE = 10
 
 const today = () => new Date().toISOString().split('T')[0]
 const EMPTY = { date: today(), heureDebut: '08:00', heureFin: '10:00', type: '', eleveId: '', moniteurId: '', vehiculeId: '', observations: '' }
@@ -32,6 +35,7 @@ export default function Lecons({ onBack }) {
   const [editId, setEditId]       = useState(null)
   const [showModal, setShowModal] = useState(false)
   const [loading, setLoading]     = useState(true)
+  const [page, setPage]           = useState(1)
   const [eleves, setEleves]       = useState([])
   const [moniteurs, setMoniteurs] = useState([])
   const [vehicules, setVehicules] = useState([])
@@ -215,7 +219,7 @@ export default function Lecons({ onBack }) {
                     </div>
                   </td>
                 </tr>
-              ) : list.map((l, i) => {
+              ) : list.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE).map((l, i) => {
                 const editable   = l.statut === 'PLANIFIEE'
                 const terminable = l.statut === 'PLANIFIEE' || l.statut === 'EN_COURS'
                 const typeSt     = TYPE_STYLE[l.type]   || { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8', label: l.type }
@@ -298,6 +302,7 @@ export default function Lecons({ onBack }) {
             </tbody>
           </table>
         </div>
+        <Pagination page={page} setPage={setPage} total={list.length} pageSize={PAGE_SIZE} />
       </div>
 
       {/* ── Modal planifier / modifier ───────────────────────── */}

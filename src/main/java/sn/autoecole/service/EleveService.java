@@ -7,16 +7,21 @@ import org.springframework.transaction.annotation.Transactional;
 import sn.autoecole.dto.EleveRequest;
 import sn.autoecole.entity.Eleve;
 import sn.autoecole.entity.Moniteur;
+import sn.autoecole.entity.Paiement;
 import sn.autoecole.entity.User;
 import sn.autoecole.enums.CategoriePermis;
 import sn.autoecole.enums.RoleUser;
 import sn.autoecole.enums.StatutEleve;
+import sn.autoecole.enums.StatutPaiement;
+import sn.autoecole.enums.TypePaiement;
 import sn.autoecole.exception.BusinessException;
 import sn.autoecole.exception.ResourceNotFoundException;
 import sn.autoecole.repository.EleveRepository;
 import sn.autoecole.repository.MoniteurRepository;
+import sn.autoecole.repository.PaiementRepository;
 import sn.autoecole.repository.UserRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,6 +33,7 @@ public class EleveService {
     private final EleveRepository    eleveRepository;
     private final MoniteurRepository moniteurRepository;
     private final UserRepository     userRepository;
+    private final PaiementRepository paiementRepository;
     private final PasswordEncoder    passwordEncoder;
 
     public List<Eleve> listerTous() {
@@ -72,6 +78,16 @@ public class EleveService {
         eleve.setMoniteur(resolveMoniteur(request.getMoniteurId()));
         Eleve saved = eleveRepository.save(eleve);
         creerCompteParDefaut(saved);
+        if (request.getMontantAvance() != null && request.getMontantAvance().compareTo(BigDecimal.ZERO) > 0) {
+            paiementRepository.save(Paiement.builder()
+                    .date(LocalDate.now())
+                    .montant(request.getMontantAvance())
+                    .eleve(saved)
+                    .typePaiement(TypePaiement.INSCRIPTION)
+                    .statut(StatutPaiement.PAYE)
+                    .description("Versement à l'inscription")
+                    .build());
+        }
         return saved;
     }
 

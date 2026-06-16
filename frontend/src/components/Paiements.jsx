@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import { api } from '../api'
 import { fmtDate, fmtMontant } from '../utils'
 import { toast } from './Toast'
+import Pagination from './Pagination'
 import '../landing.css'
+
+const PAGE_SIZE = 10
 
 const today = () => new Date().toISOString().split('T')[0]
 const EMPTY = { date: today(), eleveId: '', montant: '', typePaiement: '', statut: 'PAYE', description: '' }
@@ -31,6 +34,7 @@ export default function Paiements() {
   const [showModal, setShowModal]     = useState(false)
   const [loading, setLoading]         = useState(true)
   const [eleves, setEleves]           = useState([])
+  const [page, setPage]               = useState(1)
 
   const load = async () => {
     setLoading(true)
@@ -179,7 +183,7 @@ export default function Paiements() {
                     </div>
                   </td>
                 </tr>
-              ) : list.map((p, i) => {
+              ) : list.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE).map((p, i) => {
                 const tp = TYPE_P[p.typePaiement]   || { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8', label: p.typePaiement }
                 const st = STATUT_P[p.statut]       || { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8', label: p.statut }
                 const isEven = i % 2 === 0
@@ -247,6 +251,7 @@ export default function Paiements() {
             </tbody>
           </table>
         </div>
+        <Pagination page={page} setPage={setPage} total={list.length} pageSize={PAGE_SIZE} />
       </div>
 
       {/* ── Modal ────────────────────────────────────────────── */}

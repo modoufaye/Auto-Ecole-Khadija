@@ -3,7 +3,10 @@ import { api } from '../api'
 import { fmtDate } from '../utils'
 import { toast } from './Toast'
 import { useAuth } from '../context/AuthContext'
+import Pagination from './Pagination'
 import '../landing.css'
+
+const PAGE_SIZE = 10
 
 const today = () => new Date().toISOString().split('T')[0]
 const EMPTY     = { date: today(), eleveId: '', type: '', resultat: 'EN_ATTENTE', score: '', observations: '' }
@@ -32,6 +35,7 @@ export default function Examens({ onEleveClick, onBack }) {
   const [filterType, setFilterType]         = useState('')
   const [filterResultat, setFilterResultat] = useState('')
   const [filterTentative, setFilterTentative] = useState('')
+  const [page, setPage]                     = useState(1)
   const [filterDateDe, setFilterDateDe]     = useState('')
   const [filterDateA, setFilterDateA]       = useState('')
   const [form, setForm]                     = useState(EMPTY)
@@ -98,6 +102,8 @@ export default function Examens({ onEleveClick, onBack }) {
     try { await api('DELETE', `/examens/${id}`); toast('Examen supprimé'); load() }
     catch (e) { toast(e.message, 'danger') }
   }
+
+  useEffect(() => { setPage(1) }, [search, filterType, filterResultat, filterTentative, filterDateDe, filterDateA])
 
   const tentatives = [...new Set(list.map(e => e.tentative))].sort((a, b) => a - b)
 
@@ -267,7 +273,7 @@ export default function Examens({ onEleveClick, onBack }) {
                     </div>
                   </td>
                 </tr>
-              ) : filtered.map((e, i) => {
+              ) : filtered.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE).map((e, i) => {
                 const resSt  = RES_STYLE[e.resultat]  || { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8', label: e.resultat }
                 const typeSt = TYPE_STYLE[e.type]      || { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8', label: e.type }
                 const isEven = i % 2 === 0
@@ -340,6 +346,7 @@ export default function Examens({ onEleveClick, onBack }) {
             </tbody>
           </table>
         </div>
+        <Pagination page={page} setPage={setPage} total={filtered.length} pageSize={PAGE_SIZE} />
       </div>
 
       {/* ── Modal nouvel examen ───────────────────────────────── */}

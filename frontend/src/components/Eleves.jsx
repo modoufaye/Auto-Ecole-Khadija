@@ -4,11 +4,15 @@ import { fmtDate, fmtTime, fmtMontant, BADGES, LABELS } from '../utils'
 import Badge from './Badge'
 import { toast } from './Toast'
 import { useAuth } from '../context/AuthContext'
+import Pagination from './Pagination'
 import '../landing.css'
+
+const PAGE_SIZE = 10
 
 const EMPTY = {
   nom: '', prenom: '', dateNaissance: '', telephone: '',
   adresse: '', email: '', numeroCni: '', categoriePermis: '', statut: 'EN_COURS', moniteurId: '',
+  montantAvance: '',
 }
 
 const STATUTS = [
@@ -241,6 +245,7 @@ export default function Eleves({ initialEleveId }) {
   const [showModal, setShowModal] = useState(false)
   const [loading, setLoading]     = useState(true)
   const [selected, setSelected]   = useState(null)
+  const [page, setPage]           = useState(1)
   const [profileData, setProfileData] = useState({ lecons: [], examens: [], paiements: [], totalPaye: 0 })
   const [loadingProfile, setLoadingProfile] = useState(false)
   const [activeTab, setActiveTab] = useState('lecons')
@@ -274,6 +279,7 @@ export default function Eleves({ initialEleveId }) {
     }
     if (statut) r = r.filter(e => e.statut === statut)
     setFiltered(r)
+    setPage(1)
   }, [search, statut, list])
 
   const openProfile = async (eleve) => {
@@ -316,8 +322,12 @@ export default function Eleves({ initialEleveId }) {
     if (!nom || !prenom || !telephone || !categoriePermis || !dateNaissance) {
       toast('Veuillez remplir tous les champs obligatoires', 'warning'); return
     }
+    if (!editId && (!form.montantAvance || parseFloat(form.montantAvance) <= 0)) {
+      toast('Le montant avancé à l\'inscription est obligatoire', 'warning'); return
+    }
     const data = { ...form, adresse: form.adresse || null, email: form.email || null,
-      numeroCni: form.numeroCni || null, moniteurId: form.moniteurId ? Number(form.moniteurId) : null }
+      numeroCni: form.numeroCni || null, moniteurId: form.moniteurId ? Number(form.moniteurId) : null,
+      montantAvance: form.montantAvance ? parseFloat(form.montantAvance) : null }
     try {
       if (editId) { await api('PUT', `/eleves/${editId}`, data); toast('Élève modifié') }
       else { await api('POST', '/eleves', data); toast('Élève créé') }
@@ -400,6 +410,20 @@ export default function Eleves({ initialEleveId }) {
                   <input className={inputCls} value={form.adresse}
                     onChange={e => setForm(fm => ({ ...fm, adresse: e.target.value }))} />
                 </div>
+                {!editId && (
+                  <div className="col-12">
+                    <label className={labelCls}>
+                      Montant avancé à l'inscription (FCFA) <span className="text-red-500">*</span>
+                    </label>
+                    <input type="number" min="0" className={inputCls}
+                      placeholder="Ex: 50000 FCFA"
+                      value={form.montantAvance}
+                      onChange={e => setForm(fm => ({ ...fm, montantAvance: e.target.value }))} />
+                    <p className="text-xs text-slate-400 mt-1">
+                      Un paiement de type <strong>Inscription</strong> sera automatiquement créé
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
             <div className="modal-footer border-0 px-6 pb-5 pt-2 gap-2">
@@ -607,7 +631,7 @@ export default function Eleves({ initialEleveId }) {
           </div>
         </div>
 
-        {showModal && <Modal />}
+        {showModal && Modal()}
       </div>
     )
   }
@@ -686,7 +710,7 @@ export default function Eleves({ initialEleveId }) {
                     <div className="mt-2 text-sm font-medium">Aucun élève enregistré</div>
                   </div>
                 </td></tr>
-              ) : filtered.map((e, i) => {
+              ) : filtered.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE).map((e, i) => {
                 const st = STATUT_STYLE[e.statut] || { bg: '#f1f5f9', color: '#64748b', label: e.statut }
                 return (
                   <tr key={e.id} className="hover:bg-slate-50 transition-colors">
@@ -759,9 +783,10 @@ export default function Eleves({ initialEleveId }) {
             </tbody>
           </table>
         </div>
+        <Pagination page={page} setPage={setPage} total={filtered.length} pageSize={PAGE_SIZE} />
       </div>
 
-      {showModal && <Modal />}
+      {showModal && Modal()}
     </div>
   )
 }

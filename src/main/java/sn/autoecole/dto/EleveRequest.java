@@ -5,6 +5,7 @@ import lombok.Data;
 import sn.autoecole.enums.CategoriePermis;
 import sn.autoecole.enums.StatutEleve;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -35,4 +36,6 @@ public class EleveRequest {
     private StatutEleve statut;
 
     private Long moniteurId;
+
+    private BigDecimal montantAvance;
 }

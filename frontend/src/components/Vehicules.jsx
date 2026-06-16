@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api'
 import { toast } from './Toast'
+import Pagination from './Pagination'
 import '../landing.css'
+
+const PAGE_SIZE = 10
 
 const EMPTY = {
   immatriculation: '', marque: '', modele: '',
@@ -32,6 +35,7 @@ export default function Vehicules() {
   const [editId, setEditId]           = useState(null)
   const [showModal, setShowModal]     = useState(false)
   const [loading, setLoading]         = useState(true)
+  const [page, setPage]               = useState(1)
 
   const load = async () => {
     setLoading(true)
@@ -49,6 +53,7 @@ export default function Vehicules() {
     if (statutFilter) result = result.filter(v => v.statut === statutFilter)
     if (catFilter)    result = result.filter(v => v.categorie === catFilter)
     setFiltered(result)
+    setPage(1)
   }, [statutFilter, catFilter, list])
 
   const openModal = (v = null) => {
@@ -194,7 +199,7 @@ export default function Vehicules() {
                     </div>
                   </td>
                 </tr>
-              ) : filtered.map((v, i) => {
+              ) : filtered.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE).map((v, i) => {
                 const st = STATUT_V[v.statut] || { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8', label: v.statut }
                 const isEven = i % 2 === 0
                 return (
@@ -259,6 +264,7 @@ export default function Vehicules() {
             </tbody>
           </table>
         </div>
+        <Pagination page={page} setPage={setPage} total={filtered.length} pageSize={PAGE_SIZE} />
       </div>
 
       {/* ── Modal ────────────────────────────────────────────── */}

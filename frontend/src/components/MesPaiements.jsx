@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api'
+import Pagination from './Pagination'
 import '../landing.css'
 
 const TYPE_LABEL = {
@@ -15,9 +16,12 @@ const STATUT_CFG = {
   ANNULE:     { label: 'Annulé',     bg: '#fef2f2', color: '#b91c1c', dot: '#ef4444' },
 }
 
+const PAGE_SIZE = 10
+
 export default function MesPaiements({ onBack }) {
   const [paiements, setPaiements] = useState([])
   const [loading, setLoading]     = useState(true)
+  const [page, setPage]           = useState(1)
 
   useEffect(() => {
     api('GET', '/eleve/mes-paiements')
@@ -107,7 +111,7 @@ export default function MesPaiements({ onBack }) {
           </div>
         ) : (
           <div className="divide-y divide-slate-50">
-            {paiements.map(p => {
+            {paiements.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE).map(p => {
               const cfg = STATUT_CFG[p.statut] || STATUT_CFG.PAYE
               return (
                 <div key={p.id} className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 transition-colors">
@@ -146,6 +150,7 @@ export default function MesPaiements({ onBack }) {
             })}
           </div>
         )}
+        <Pagination page={page} setPage={setPage} total={paiements.length} pageSize={PAGE_SIZE} />
       </div>
     </div>
   )

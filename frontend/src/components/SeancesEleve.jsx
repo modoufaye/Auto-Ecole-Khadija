@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api'
+import Pagination from './Pagination'
 import '../landing.css'
+
+const PAGE_SIZE = 10
 
 const THEMES = {
   FEUX_SIGNALISATION:     '🚦 Feux de signalisation',
@@ -49,6 +52,7 @@ export default function SeancesEleve({ onBack }) {
   const [seances, setSeances]   = useState([])
   const [loading, setLoading]   = useState(true)
   const [selected, setSelected] = useState(null)
+  const [page, setPage]         = useState(1)
 
   useEffect(() => {
     api('GET', '/eleve/seances')
@@ -178,7 +182,7 @@ export default function SeancesEleve({ onBack }) {
           </div>
         ) : (
           <div className="divide-y divide-slate-50">
-            {seances.map((s, idx) => {
+            {seances.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE).map((s, idx) => {
               const icon = blocIcon(s.blocs)
               const nVid  = s.blocs.filter(b => b.typeBloc === 'VIDEO').length
               const nImg  = s.blocs.filter(b => b.typeBloc === 'IMAGE').length
@@ -229,6 +233,7 @@ export default function SeancesEleve({ onBack }) {
             })}
           </div>
         )}
+        <Pagination page={page} setPage={setPage} total={seances.length} pageSize={PAGE_SIZE} />
       </div>
     </div>
   )
