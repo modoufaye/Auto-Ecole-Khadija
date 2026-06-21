@@ -79,12 +79,12 @@ public class PaiementService {
     }
 
     public BigDecimal totalEncaisse() {
-        BigDecimal total = paiementRepository.sumMontantPaye();
+        BigDecimal total = paiementRepository.sumMontantPaye(sn.autoecole.enums.StatutPaiement.PAYE);
         return total != null ? total : BigDecimal.ZERO;
     }
 
     public BigDecimal totalEncaisseParEleve(Long eleveId) {
-        BigDecimal total = paiementRepository.sumMontantPayeByEleve(eleveId);
+        BigDecimal total = paiementRepository.sumMontantPayeByEleve(eleveId, sn.autoecole.enums.StatutPaiement.PAYE);
         return total != null ? total : BigDecimal.ZERO;
     }
 }

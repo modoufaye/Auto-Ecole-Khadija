@@ -4,6 +4,9 @@ import { fmtMontant } from '../utils'
 import { toast } from './Toast'
 import { useAuth } from '../context/AuthContext'
 import '../landing.css'
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
+} from 'recharts'
 
 /* ══════════════════════════════════════════════════════════
    COMPOSANTS PARTAGÉS
@@ -260,6 +263,99 @@ function DashboardMoniteur({ stats, user }) {
 }
 
 /* ══════════════════════════════════════════════════════════
+   GRAPHIQUE NOUVEAUX ÉLÈVES PAR SEMAINE
+══════════════════════════════════════════════════════════ */
+
+function GraphiqueElevesParSemaine() {
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const MOIS = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc']
+
+  useEffect(() => {
+    api('GET', '/dashboard/eleves-par-semaine')
+      .then(rows => setData(rows.map(r => {
+        const [mm, yyyy] = r.semaine.split('/')
+        return { semaine: `${MOIS[parseInt(mm, 10) - 1]} ${yyyy}`, nombre: Number(r.nombre) }
+      })))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const maxVal = data.length ? Math.max(...data.map(d => d.nombre)) : 1
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (!active || !payload?.length) return null
+    return (
+      <div className="rounded-xl px-4 py-2 text-sm font-semibold shadow-lg"
+        style={{ background: '#1e3a5f', color: '#fff' }}>
+        <div className="text-xs opacity-70 mb-0.5">{label}</div>
+        <div>{payload[0].value} nouvel{payload[0].value > 1 ? 'aux' : ''} élève{payload[0].value > 1 ? 's' : ''}</div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 2px 12px rgba(0,0,0,.07)' }}>
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+          style={{ background: 'linear-gradient(135deg,#1e3a5f,#2a4f7c)' }}>
+          <i className="bi bi-graph-up text-white" style={{ fontSize: '.9rem' }} />
+        </div>
+        <div>
+          <div className="font-extrabold text-slate-800 text-sm">Nouveaux élèves par mois</div>
+          <div className="text-xs text-slate-400">Évolution depuis le début</div>
+        </div>
+        {data.length > 0 && (
+          <span className="ml-auto text-xs font-bold px-3 py-1 rounded-full"
+            style={{ background: '#e0e7ff', color: '#1e3a5f' }}>
+            {data.reduce((s, d) => s + d.nombre, 0)} élèves au total
+          </span>
+        )}
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center h-48">
+          <div className="w-8 h-8 border-4 border-slate-100 border-t-[#1e3a5f] rounded-full animate-spin" />
+        </div>
+      ) : data.length === 0 ? (
+        <div className="flex items-center justify-center h-48 text-slate-400 text-sm">Aucune donnée</div>
+      ) : (
+        <ResponsiveContainer width="100%" height={260}>
+          <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 60 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+            <XAxis
+              dataKey="semaine"
+              tick={{ fontSize: 9, fill: '#94a3b8' }}
+              angle={-45}
+              textAnchor="end"
+              interval={0}
+              tickLine={false}
+              axisLine={false}
+            />
+            <YAxis
+              allowDecimals={false}
+              tick={{ fontSize: 10, fill: '#94a3b8' }}
+              tickLine={false}
+              axisLine={false}
+            />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f1f5f933' }} />
+            <Bar dataKey="nombre" radius={[4, 4, 0, 0]} maxBarSize={28}>
+              {data.map((entry, i) => (
+                <Cell
+                  key={i}
+                  fill={entry.nombre === maxVal ? '#1e3a5f' : '#93c5fd'}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════════════════════
    DASHBOARD ADMIN
 ══════════════════════════════════════════════════════════ */
 
@@ -335,11 +431,12 @@ function DashboardAdmin({ stats, user }) {
       {/* ══ ÉLÈVES ════════════════════════════════════════════ */}
       <div>
         <SectionTitle gradient="linear-gradient(#1e3a5f,#2a4f7c)" label="Élèves" />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard title="Total élèves" value={stats.totalEleves}     icon="people-fill"       accent="#1e3a5f" />
-          <StatCard title="En formation" value={stats.elevesEnCours}   icon="person-check-fill" accent="#3b82f6" />
-          <StatCard title="Diplômés"     value={stats.elevesDiplomes}  icon="award-fill"        accent="#10b981" />
-          <StatCard title="Suspendus"    value={stats.elevesSuspendus} icon="person-x-fill"     accent="#f59e0b" />
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <StatCard title="Total élèves" value={stats.totalEleves}       icon="people-fill"       accent="#1e3a5f" />
+          <StatCard title="En formation" value={stats.elevesEnCours}     icon="person-check-fill" accent="#3b82f6" />
+          <StatCard title="Diplômés"     value={stats.elevesDiplomes}    icon="award-fill"        accent="#10b981" />
+          <StatCard title="Suspendus"    value={stats.elevesSuspendus}   icon="person-x-fill"     accent="#f59e0b" />
+          <StatCard title="Abandonnés"   value={stats.elevesAbandonnes}  icon="person-dash-fill"  accent="#ef4444" />
         </div>
 
         {/* Barre de répartition élèves */}
@@ -351,19 +448,21 @@ function DashboardAdmin({ stats, user }) {
             </div>
             <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
               {[
-                { val: stats.elevesEnCours,   color: '#3b82f6' },
-                { val: stats.elevesDiplomes,  color: '#10b981' },
-                { val: stats.elevesSuspendus, color: '#f59e0b' },
+                { val: stats.elevesEnCours,    color: '#3b82f6' },
+                { val: stats.elevesDiplomes,   color: '#10b981' },
+                { val: stats.elevesSuspendus,  color: '#f59e0b' },
+                { val: stats.elevesAbandonnes, color: '#ef4444' },
               ].map(({ val, color }, i) => val > 0 && (
                 <div key={i} className="h-full transition-all duration-700 first:rounded-l-full last:rounded-r-full"
                   style={{ width: `${val / stats.totalEleves * 100}%`, background: color }} />
               ))}
             </div>
-            <div className="flex gap-4 mt-2">
+            <div className="flex gap-4 mt-2 flex-wrap">
               {[
                 { label: 'En formation', color: '#3b82f6', val: stats.elevesEnCours },
                 { label: 'Diplômés',     color: '#10b981', val: stats.elevesDiplomes },
                 { label: 'Suspendus',    color: '#f59e0b', val: stats.elevesSuspendus },
+                { label: 'Abandonnés',   color: '#ef4444', val: stats.elevesAbandonnes },
               ].map(({ label, color, val }) => (
                 <div key={label} className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color }} />
@@ -373,6 +472,7 @@ function DashboardAdmin({ stats, user }) {
             </div>
           </div>
         )}
+
       </div>
 
       {/* ══ PERSONNEL & FLOTTE ════════════════════════════════ */}
@@ -555,6 +655,12 @@ function DashboardAdmin({ stats, user }) {
             <FinanceCard value={stats.totalPaiements}            label="Paiements enregistrés" icon="receipt"   accent="#1e3a5f" />
           </div>
         </div>
+      </div>
+
+      {/* ══ ÉVOLUTION HEBDOMADAIRE ════════════════════════════ */}
+      <div>
+        <SectionTitle gradient="linear-gradient(#1e3a5f,#2a4f7c)" label="Évolution des inscriptions" />
+        <GraphiqueElevesParSemaine />
       </div>
 
     </div>

@@ -27,6 +27,7 @@ public class DashboardService {
                 .elevesEnCours(eleveRepository.countByStatut(StatutEleve.EN_COURS))
                 .elevesDiplomes(eleveRepository.countByStatut(StatutEleve.DIPLOME))
                 .elevesSuspendus(eleveRepository.countByStatut(StatutEleve.SUSPENDU))
+                .elevesAbandonnes(eleveRepository.countByStatut(StatutEleve.ABANDONNE))
                 .totalMoniteurs(moniteurRepository.count())
                 .moniteursActifs(moniteurRepository.findByActifTrue().size())
                 .totalVehicules(vehiculeRepository.count())
@@ -39,8 +40,8 @@ public class DashboardService {
                 .examensAdmis(examenRepository.countByResultat(ResultatExamen.ADMIS))
                 .examensRefuses(examenRepository.countByResultat(ResultatExamen.REFUSE))
                 .examensEnAttente(examenRepository.countByResultat(ResultatExamen.EN_ATTENTE))
-                .totalEncaisse(paiementRepository.sumMontantPaye() != null
-                        ? paiementRepository.sumMontantPaye() : java.math.BigDecimal.ZERO)
+                .totalEncaisse(paiementRepository.sumMontantPaye(StatutPaiement.PAYE) != null
+                        ? paiementRepository.sumMontantPaye(StatutPaiement.PAYE) : java.math.BigDecimal.ZERO)
                 .totalPaiements(paiementRepository.count())
                 .totalSeances(seanceRepository.count())
                 .seancesPubliees(seanceRepository.countByStatut(StatutSeance.PUBLIE))

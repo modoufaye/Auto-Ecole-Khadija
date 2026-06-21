@@ -10,6 +10,7 @@ import sn.autoecole.enums.CategoriePermis;
 import sn.autoecole.enums.StatutEleve;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -31,4 +32,18 @@ public interface EleveRepository extends JpaRepository<Eleve, Long> {
 
     @Query("SELECT COUNT(e) FROM Eleve e WHERE e.statut = :statut")
     long countByStatut(@Param("statut") StatutEleve statut);
+
+    @Query(value = """
+            SELECT TO_CHAR(m.mois, 'MM/YYYY') AS semaine,
+                   COALESCE(COUNT(e.id), 0) AS nombre
+            FROM generate_series(
+                DATE_TRUNC('year', CURRENT_DATE),
+                DATE_TRUNC('month', CURRENT_DATE),
+                INTERVAL '1 month'
+            ) AS m(mois)
+            LEFT JOIN eleves e ON DATE_TRUNC('month', e.date_inscription) = m.mois
+            GROUP BY m.mois
+            ORDER BY m.mois
+            """, nativeQuery = true)
+    List<Map<String, Object>> countElevesParSemaine();
 }

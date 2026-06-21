@@ -26,9 +26,9 @@ public interface PaiementRepository extends JpaRepository<Paiement, Long> {
 
     List<Paiement> findByDateBetween(LocalDate debut, LocalDate fin);
 
-    @Query("SELECT SUM(p.montant) FROM Paiement p WHERE p.statut = 'PAYE'")
-    BigDecimal sumMontantPaye();
+    @Query("SELECT SUM(p.montant) FROM Paiement p WHERE p.statut = :statut")
+    BigDecimal sumMontantPaye(@Param("statut") StatutPaiement statut);
 
-    @Query("SELECT SUM(p.montant) FROM Paiement p WHERE p.eleve.id = :eleveId AND p.statut = 'PAYE'")
-    BigDecimal sumMontantPayeByEleve(@Param("eleveId") Long eleveId);
+    @Query("SELECT SUM(p.montant) FROM Paiement p WHERE p.eleve.id = :eleveId AND p.statut = :statut")
+    BigDecimal sumMontantPayeByEleve(@Param("eleveId") Long eleveId, @Param("statut") StatutPaiement statut);
 }
