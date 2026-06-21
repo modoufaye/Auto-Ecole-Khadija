@@ -109,7 +109,7 @@ function DashboardMoniteur({ stats, user }) {
             </div>
             <div>
               <div className="text-xl font-extrabold text-white leading-tight">{greeting}, {user?.nom?.split(' ')[0]} 👋</div>
-              <div className="text-sm text-blue-200 mt-0.5">Moniteur — Auto-École Khadija</div>
+              <div className="text-sm text-blue-200 mt-0.5">Moniteur — Auto-École Sayda</div>
             </div>
           </div>
 
@@ -402,7 +402,7 @@ function DashboardAdmin({ stats, user }) {
             </div>
             <div>
               <div className="text-xl font-extrabold text-white leading-tight">{greeting}, {user?.nom?.split(' ')[0]} 👋</div>
-              <div className="text-sm text-blue-200 mt-0.5">Administrateur — Auto-École Khadija</div>
+              <div className="text-sm text-blue-200 mt-0.5">Administrateur — Auto-École Sayda</div>
             </div>
           </div>
 
